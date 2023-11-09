@@ -4,6 +4,7 @@ import "./globals.css";
 import { Sidebar } from "@/components/sidebar";
 import { ThemeProvider } from "@/provider/theme-provider";
 import { FollowBar } from "@/components/follow-bar";
+import { ModalProvider } from "@/provider/modal-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +32,7 @@ export default function RootLayout({
               <div className="grid grid-cols-4 h-full">
                 <Sidebar />
                 <div className="col-span-3 lg:col-span-2 border-x-[1px] border-neutral-800">
+                  <ModalProvider />
                   {children}
                 </div>
                 <FollowBar />
