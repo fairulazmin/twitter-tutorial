@@ -23,14 +23,15 @@ model User {
   hashedPassword  String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
-  followingIds    User[]
   hasNotification Boolean?
+
+  followers User[] @relation("UserFollows")
+  following User[] @relation("UserFollows")
+  likes     Post[] @relation("LikedBy")
 
   posts         Post[]
   comments      Comment[]
   notifications Notification[]
-  userId        String?
-  User          User?          @relation(fields: [userId], references: [id])
 }
 
 model Post {
@@ -38,11 +39,12 @@ model Post {
   body      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  image     String?
 
-  likedIds User[]
   comments Comment[]
+  likedBy  User[]    @relation("LikedBy")
 
-  userId String @unique
+  userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -52,9 +54,9 @@ model Comment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  userId String @unique
+  userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  postId Int    @unique
+  postId Int
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
@@ -62,8 +64,7 @@ model Notification {
   id        Int      @id @default(autoincrement())
   body      String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
