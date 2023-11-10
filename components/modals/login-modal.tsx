@@ -1,85 +1,91 @@
-"use client";
+'use client'
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import { useLoginModal } from "@/hooks/use-login-modal";
-import { useRegisterModal } from "@/hooks/use-register-modal";
-import { useCallback, useState } from "react";
+} from '@/components/ui/form'
+import { useLoginModal } from '@/hooks/use-login-modal'
+import { useRegisterModal } from '@/hooks/use-register-modal'
+import { useCallback, useState } from 'react'
+import axios from 'axios'
+import toast from 'react-hot-toast'
+import { signIn } from 'next-auth/react'
 
 const formSchema = z.object({
   email: z.string().email().min(8, {
-    message: "Email must be at least 8 characters",
+    message: 'Email must be at least 8 characters',
   }),
   password: z.string().min(8, {
-    message: "Password must be at least 8 characters",
+    message: 'Password must be at least 8 characters',
   }),
-});
+})
 
 export const LoginModal = () => {
-  const [loading, setLoading] = useState(false);
-  const loginModal = useLoginModal();
-  const registerModal = useRegisterModal();
+  const [loading, setLoading] = useState(false)
+  const loginModal = useLoginModal()
+  const registerModal = useRegisterModal()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-  });
+  })
 
   const onToggle = useCallback(() => {
     if (loading) {
-      return;
+      return
     }
-    loginModal.onClose();
-    registerModal.onOpen();
-  }, [loading, registerModal, loginModal]);
+    loginModal.onClose()
+    registerModal.onOpen()
+  }, [loading, registerModal, loginModal])
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      setLoading(true);
-      // TODO ADD REGISTER AND LOGIN
-      registerModal.onClose();
+      setLoading(true)
+      // TODO LOGIN
+      await signIn('credentials', values)
+      toast.success('Welcome')
+      registerModal.onClose()
     } catch (error) {
-      console.log(error);
+      toast.error('Unable to login')
+      console.log(error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-    console.log(values);
-  };
+    console.log(values)
+  }
 
   return (
     <Dialog open={loginModal.isOpen} onOpenChange={loginModal.onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>Login</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-8 mt-6"
+            className='space-y-8 mt-6'
           >
             <FormField
               control={form.control}
-              name="email"
+              name='email'
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Email" {...field} />
+                    <Input placeholder='Email' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -87,11 +93,11 @@ export const LoginModal = () => {
             />
             <FormField
               control={form.control}
-              name="password"
+              name='password'
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Password" {...field} />
+                    <Input type='password' placeholder='Password' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -99,20 +105,20 @@ export const LoginModal = () => {
             />
             <Button
               disabled={loading}
-              className="w-full rounded-full"
-              type="submit"
+              className='w-full rounded-full'
+              type='submit'
             >
               Sign in
             </Button>
           </form>
         </Form>
         <DialogFooter>
-          <div className="w-full text-sm text-neutral-400 text-center mt-4">
+          <div className='w-full text-sm text-neutral-400 text-center mt-4'>
             <p>
-              First time using Twitter?{" "}
+              First time using Twitter?{' '}
               <span
                 onClick={onToggle}
-                className="text-white cursor-pointer hover:underline"
+                className='text-white cursor-pointer hover:underline'
               >
                 Create an account
               </span>
@@ -121,5 +127,5 @@ export const LoginModal = () => {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
-};
+  )
+}
