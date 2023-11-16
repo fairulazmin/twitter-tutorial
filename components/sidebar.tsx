@@ -1,7 +1,10 @@
+"use client";
+
 import { Home, Bell, User, LogOut } from "lucide-react";
 import { SidebarLogo } from "./sidebar-logo";
 import { SidebarItem } from "./sidebar-item";
 import { SidebarTweetButton } from "./sidebar-tweet-button";
+import { signOut } from "next-auth/react";
 
 export const Sidebar = () => {
   const items = [
@@ -34,7 +37,7 @@ export const Sidebar = () => {
               icon={item.icon}
             />
           ))}
-          <SidebarItem onClick={() => {}} icon={LogOut} label="Logout" />
+          <SidebarItem icon={LogOut} label="Logout" onClick={() => signOut()} />
           <SidebarTweetButton />
         </div>
       </div>

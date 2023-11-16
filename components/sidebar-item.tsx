@@ -1,3 +1,6 @@
+import { useSession } from "next-auth/react";
+import { useCallback } from "react";
+
 interface SidebarItemProps {
   label: string;
   href?: string;
@@ -11,9 +14,15 @@ export const SidebarItem = ({
   icon: Icon,
   onClick,
 }: SidebarItemProps) => {
+  const handleClick = useCallback(() => {
+    if (onClick) {
+      return onClick();
+    }
+  }, [onClick]);
+
   return (
-    <div className="flex flex-row items-center">
-      <div className="relative rounded-full h-14 w-14 flex items-center justify-center p-4 hover:bg-slate-300 hover:bg-opacity-10 cursor-pointer lg:hidden">
+    <div onClick={handleClick} className="flex flex-row items-center">
+      <div className="relative rounded-full h-14 w-14 flex items-center justify-center p-4 hover:bg-slate-300 hover:bg-opacity-10 lg:hidden cursor-pointer">
         <Icon size={28} color="white" />
       </div>
       <div className="relative hidden lg:flex items-row gap-4 p-4 rounded-full hover:bg-slate-300 hover:bg-opacity-10 items-center">
